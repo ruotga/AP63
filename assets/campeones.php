@@ -1,66 +1,50 @@
 <?php
 
 Class Campeones{
-    Private $Nombre;
-    private $vidaIni;
-    private $manaIni;
-    private $id
+    protected $id;
+    protected $nombre;
+    protected $rol;
+    protected $tipo;
 
-    public function __construct($name, $vida, $mana){
-        $this->$vidaIni = $vida;
-        $this->$manaIni = $mana;
-        $this->$Nombre = $name;
-        $this-$id = uniqid();
+    public function __construct($nombre, $rol, $clase){
+        $this->id = uniqid();
+        $this->nombre = $nombre;
+        $this->rol = $rol;
+        $this->tipo = $clase;
+
     }
 
     //Getters
+    public function getID(){
+        return $this->id;
+    }
+
     public function getNombre(){
-            return $Nombre;
+        return $this->nombre;
     }
 
-    public function getVida(){
-        return $vidaIni;
+    public function getTipo(){
+        return $this->tipo;
     }
 
-    public function getmana(){
-        return $manaIni;
+    public function getRol(){
+        return $this->rol;
     }
+
 
     //Setters
     public function setNombre($name){
-            $this->$Nombre = $name;
-        }
-
-    public function setVida($vida){
-        $this->$vidaIni = $vida;
-        
+        $this->nombre = $name;
     }
 
-    public function setMana($mana){
-        $this->$manaIni = $mana;
+    public function setRol($posicion){
+        $this->rol = $posicion;
     }
 
-    //other methods
-
-    public function mostrar(){
-        echo "<h2>".$this->$Nombre."</h2><br>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Vida</th>
-                        <th>Mana</th>
-                        <th>ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr> 
-                        <td>".$this->$ID."</td>
-                        <td>".$this->$vidaIni."</td>
-                        <td>".$this->$manaIni."</td>
-                    </tr>
-                </tbody>
-            </table><br><br>";
-    }
+    public function setTipo($clase){
+    $this->tipo = $clase;
 }
 
+}
 ?>
+
