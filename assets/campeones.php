@@ -15,35 +15,15 @@ Class Campeones{
     }
 
     //Getters
-    public function getID(){
-        return $this->id;
-    }
-
-    public function getNombre(){
-        return $this->nombre;
-    }
-
-    public function getTipo(){
-        return $this->tipo;
-    }
-
-    public function getRol(){
-        return $this->rol;
-    }
-
+    public function getID(){ return $this->id; }
+    public function getNombre(){ return $this->nombre; }
+    public function getTipo(){ return $this->tipo; }
+    public function getRol(){ return $this->rol; }
 
     //Setters
-    public function setNombre($name){
-        $this->nombre = $name;
-    }
-
-    public function setRol($posicion){
-        $this->rol = $posicion;
-    }
-
-    public function setTipo($clase){
-    $this->tipo = $clase;
-}
+    public function setNombre($name){ $this->nombre = $name; }
+    public function setTipo($clase){ $this->tipo = $clase; }
+    public function setRol($posicion){ $this->rol = $posicion; }
 
 }
 ?>

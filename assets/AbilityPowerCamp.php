@@ -8,13 +8,9 @@ Class AbilityPowerCamp extends Campeones{
         $this->AP = $Power;
     }
 
-    public function getAP(){
-        return $this->AP;
-    }
+    public function getAP(){ return $this->AP; }
 
-    public function setAP($Power){
-        $this->AP = $Power;
-    }
+    public function setAP($Power){ $this->AP = $Power; }
 }
 
 ?>

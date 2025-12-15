@@ -8,13 +8,9 @@ Class AttackDamageCamp extends Campeones{
         $this->AD = $Damage;
     }
 
-    public function getAD(){
-        return $this->AD;
-    }
+    public function getAD(){ return $this->AD; }
 
-    public function setAD($Damage){
-        $this->AD = $Damage;
-    }
+    public function setAD($Damage){ $this->AD = $Damage; }
 }
 
 ?>

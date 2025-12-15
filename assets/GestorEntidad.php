@@ -8,10 +8,6 @@ Class GestorEntidad{
         $this->BBDD = [];
     }
 
-    public function getCampeones(){
-        return $this->BBDD;
-    }
-
     public function Crear($nombre, $rol, $clase, $daño, $tipoDaño){
         if($tipoDaño == "AD"){
             $this->BBDD[] = new AttackDamageCamp($nombre, $rol, $clase, $daño);
@@ -22,88 +18,45 @@ Class GestorEntidad{
         }
     }
 
-    public function Listar() {
-    if (empty($this->BBDD)) {
-        return "<p>No hay campeones registrados.</p>";
+    public function Listar(){
+        return $this->BBDD;
     }
-
-    $html = "<table border=1>";
-    $html .= "<thead>";
-    $html .= "<tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Rol</th>
-                <th>Clase</th>
-                <th>Tipo Daño</th>
-                <th>A.Ataque</th>
-              </tr>";
-    $html .= "</thead>";
-    $html .= "<tbody>";
-
-    $total = count($this->BBDD);
-    for ($i = 0; $i < $total; $i++) {
-        $camp = $this->BBDD[$i];
-        $html .= "<tr>";
-        $html .= "<td>" . $camp->getID() . "</td>";
-        $html .= "<td>" . $camp->getNombre() . "</td>";
-        $html .= "<td>" . $camp->getRol() . "</td>";
-        $html .= "<td>" . $camp->getTipo() . "</td>";
-
-        if ($camp instanceof AttackDamageCamp) {
-            $html .= "<td>Físico</td>";
-            $html .= "<td>" . $camp->getAD() . "</td>";
-        } elseif ($camp instanceof AbilityPowerCamp) {
-            $html .= "<td>Mágico</td>";
-            $html .= "<td>" . $camp->getAP() . "</td>";
-        }
-        $html .= "</tr>";
-    }
-    $html .= "</tbody>";
-    $html .= "</table>";
-
-    return $html;
-}
-
     
     public function Buscar($idBuscado) {
         foreach ($this->BBDD as $campeon) {
-            if ($campeon->getID() == $idBuscado) {
-                return $campeon;
-            }
+            if ($campeon->getID() == $idBuscado) { return $campeon; }
         }
         return null;
     }
 
-
-    public function Actualizar($id, $nuevoNombre, $nuevoRol, $nuevaClase, $nuevosPuntos) {    
-        $campeon = $this->Buscar($id);
-
-        if ($campeon == null) {
-            return false;
+    public function Actualizar($id, $Nombre, $Rol, $Clase, $Puntos) {    
+        foreach ($this->BBDD as $c) {
+            if($c->getId() == $id) {
+                $c->setNombre($Nombre);
+                $c->setRol($Rol);
+                $c->setTipo($Clase);
+                if($c instanceof AttackDamageCamp){
+                    $c->setAD($Puntos);
+                }elseif($c instanceof AbilityPowerCamp){
+                    $c->setAP($Puntos);
+                }else{
+                    exit("ERROR.");
+                }
+            }
         }
-
-        $campeon->setNombre($nuevoNombre);
-        $campeon->setRol($nuevoRol);
-        $campeon->setTipo($nuevaClase);
-
-        if ($campeon instanceof AttackDamageCamp) {
-            $campeon->setAD($nuevosPuntos);
-        } elseif ($campeon instanceof AbilityPowerCamp) {
-            $campeon->setAP($nuevosPuntos);
-        }
-        return $this->Listar();
     } 
 
-    public function Eliminar($idBuscado){
-    $OrganArray = []; 
-    $total = count($this->BBDD);
 
-    for ($i = 0; $i < $total; $i++) {
-        if ($this->BBDD[$i]->getID() != $idBuscado) {
-            $OrganArray[] = $this->BBDD[$i];
+
+    public function Eliminar($id) {
+        foreach ($this->BBDD as $i => $c) {
+            if ($c->getId() == $id) {
+                unset($this->BBDD[$i]);
+                $this->BBDD = array_values($this->BBDD);
+                return true;
+            }
         }
-    }
-    $this->BBDD = $OrganArray;
+        return false;
     }
 }
 
