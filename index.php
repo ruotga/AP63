@@ -1,88 +1,125 @@
 <?php
 require_once "autoloader.php";
+session_start();
 
 $gestor = new GestorEntidad();
+$accion = $_GET['accion'] ?? null;
 
-$roles = ["Top", "Jungla", "Mid", "ADC", "Support"];
-$clases = ["Luchador", "Mago", "Asesino", "Tanque", "Tirador", "Soporte"];
-$tiposDano = ["AD", "AP"];
-
-for ($i = 1; $i <= 50; $i++) {
-    
-    $nombreAleatorio = "Camp " . $i;
-    $rolAleatorio = $roles[array_rand($roles)];
-    $claseAleatoria = $clases[array_rand($clases)];
-    $tipoDanoAleatorio = $tiposDano[array_rand($tiposDano)];
-    $danoAleatorio = rand(80, 200);
-
-    $gestor->Crear($nombreAleatorio, $rolAleatorio, $claseAleatoria, $danoAleatorio, $tipoDanoAleatorio);
+if ($accion == 'crear') {
+    $gestor->Crear($_POST['nombre'], $_POST['rol'], $_POST['clase'], $_POST['daño'], $_POST['tipoDaño']);
+    header("Location: index.php");
+    exit;
 }
 
-$campeonesIniciales = $gestor->Listar();
-
-
-if (count($campeonesIniciales) >= 4) {
-    
-    $Camp1 = $campeonesIniciales[rand(0,49)];
-    $Camp2 = $campeonesIniciales[rand(0,49)];
-    $Camp3 = $campeonesIniciales[rand(0,49)];
-    $Camp4 = $campeonesIniciales[rand(0,49)];
-  
-    $idCamp1 = $Camp1->getID();
-    $idCamp2 = $Camp2->getID();
-    $idCamp3 = $Camp3->getID();
-    $idCamp4 = $Camp4->getID();
-
-    echo "<p>Campeones actualizados: " . $Camp1->getNombre() . " y " . $Camp2->getNombre() . "</p>";
-    echo "<p>Campeones eliminados: " . $Camp3->getNombre() . " y " . $Camp4->getNombre() . "</p>";
-
-    // Actualiza 2
-    $gestor->Actualizar($idCamp1, "Campeón Actualizado 1", "Top", "Tanque", 130);
-    $gestor->Actualizar($idCamp2, "Campeón Actualizado 2", "Mid", "Mago", 150);
-
-    // Elimina 2
-    $gestor->Eliminar($idCamp3); 
-    $gestor->Eliminar($idCamp4);
+if ($accion == 'actualizar') {
+    $gestor->Actualizar($_POST['id'], $_POST['nombre'], $_POST['rol'], $_POST['clase'], $_POST['daño']);
+    header("Location: index.php");
+    exit;
 }
 
+if ($accion == 'eliminar') {
+    $gestor->Eliminar($_GET['id']);
+    header("Location: index.php");
+    exit;
+}
 
+if ($accion == 'vaciar') {
+    unset($_SESSION['Camps']);
+    header("Location: index.php");
+    exit;
+}
+
+$campeonAEditar = (isset($_GET['editar'])) ? $gestor->Buscar($_GET['editar']) : null;
 $campeones = $gestor->Listar();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CRUD de Campeones - POO y Arrays</title>
+    <title>CRUDv2</title>
+    <style>
+        form {
+            background-color: lightgrey; padding: 10px;
+        }
+        
+        input, select{
+            margin-bottom: 5px;
+        }
+
+        th,td,tr{
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Listado de Campeones</h2>
+<h2><?= $campeonAEditar ? "Editar" : "Crear" ?> Campeón</h2>
+        
+<form method="POST" action="index.php?accion=<?= $campeonAEditar ? 'actualizar' : 'crear' ?>">
+    <?php if ($campeonAEditar): ?>
+        <input type="hidden" name="id" value="<?= $campeonAEditar->getID() ?>">
+    <?php endif; ?>
 
-<table border="1" cellpadding="10">
+        <span>|</span>
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" value="<?= $campeonAEditar ? $campeonAEditar->getNombre() : '' ?>" required>
+        <span>|</span>
+    <label for="rol">Rol:</label>
+    <input type="text" id="rol" name="rol" value="<?= $campeonAEditar ? $campeonAEditar->getRol() : '' ?>" required>
+        <span>|</span><br>
+        <span>|</span>
+    <label for="clase">Clase:</label>
+    <input type="text" id="clase" name="clase" value="<?= $campeonAEditar ? $campeonAEditar->getTipo() : '' ?>" required>
+        <span>|</span>
+    <label for="daño">Daño:</label>
+    <input type="number" id="daño" name="daño" value="<?= $campeonAEditar ? ($campeonAEditar instanceof AttackDamageCamp ? $campeonAEditar->getAD() : $campeonAEditar->getAP()) : '' ?>" required>
+        <span>|</span><br>
+        
+    <?php if (!$campeonAEditar): ?>
+        <span>|</span>
+        <label for="tipoDaño">Tipo:</label>
+        <select id="tipoDaño" name="tipoDaño">
+            <option value="AD">AD</option>
+            <option value="AP">AP</option>
+        </select>
+        <span>|</span><br>
+    <?php endif; ?>
+        
+    <button type="submit"><?= $campeonAEditar ? "Actualizar" : "Guardar" ?></button>
+
+    <?php if (!$campeonAEditar): ?>
+        <span>|</span>
+        <a href="index.php?accion=vaciar">
+            <button type="button" style="background-color: #ff6565ff; border: 1px solid red; cursor: pointer;">
+                Vaciar Lista
+            </button>
+        </a>
+    <?php endif; ?>
+</form>
+<hr>
+
+<table border="1">
     <tr>
         <th>ID</th>
         <th>Nombre</th>
         <th>Rol</th>
         <th>Clase</th>
-        <th>Daño Base</th>
+        <th>Daño</th>
+        <th>Acciones</th>
     </tr>
-
-    <?php foreach ($campeones as $c): ?>
+    <?php foreach ($campeones as $campeon): ?>
     <tr>
-        <td><?= $c->getId() ?></td>
-        <td><?= $c->getNombre() ?></td>
-        <td><?= $c->getRol() ?></td>
-        <td><?= $c->getTipo() ?></td>
+        <td><?= $campeon->getID() ?></td>
+        <td><?= $campeon->getNombre() ?></td>
+        <td><?= $campeon->getRol() ?></td>
+        <td><?= $campeon->getTipo() ?></td>
         <td>
-            <?php 
-            if ($c instanceof AttackDamageCamp) {
-                echo $c->getAD() . " (AD)"; 
-            } elseif ($c instanceof AbilityPowerCamp) {
-                echo $c->getAP() . " (AP)";
-            } else {
-                echo "desconocido.";
-            }
-            ?>
+            <?= ($campeon instanceof AttackDamageCamp) ? $campeon->getAD() . " | AD" : $campeon->getAP() . " | AP" ?>
+        </td>
+        <td>
+            <a href="index.php?editar=<?= $campeon->getID() ?>">Editar</a>
+            <span> | </span>
+            <a href="index.php?accion=eliminar&id=<?= $campeon->getID() ?>">Eliminar</a>
         </td>
     </tr>
     <?php endforeach; ?>

@@ -13,4 +13,3 @@ Class AbilityPowerCamp extends Campeones{
     public function setAP($Power){ $this->AP = $Power; }
 }
 
-?>

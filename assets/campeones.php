@@ -26,5 +26,5 @@ Class Campeones{
     public function setRol($posicion){ $this->rol = $posicion; }
 
 }
-?>
+
 

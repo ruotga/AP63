@@ -5,32 +5,31 @@ Class GestorEntidad{
     private $BBDD;
 
     public function __construct(){
-        $this->BBDD = [];
+        if(!isset($_SESSION['Camps']))
+        $_SESSION['Camps'] = [];
     }
 
     public function Crear($nombre, $rol, $clase, $daño, $tipoDaño){
         if($tipoDaño == "AD"){
-            $this->BBDD[] = new AttackDamageCamp($nombre, $rol, $clase, $daño);
+            $_SESSION['Camps'][] = new AttackDamageCamp($nombre, $rol, $clase, $daño);
         }elseif($tipoDaño == "AP"){
-            $this->BBDD[] = new AbilityPowerCamp($nombre, $rol, $clase, $daño);
-        }else{
-            exit("Tipo de daño desconocido, inserta un tipo de daño valido.");
+            $_SESSION['Camps'][] = new AbilityPowerCamp($nombre, $rol, $clase, $daño);
         }
-    }
+    } 
 
     public function Listar(){
-        return $this->BBDD;
+        return $_SESSION['Camps'];
     }
     
     public function Buscar($idBuscado) {
-        foreach ($this->BBDD as $campeon) {
+        foreach ($_SESSION['Camps'] as $campeon) {
             if ($campeon->getID() == $idBuscado) { return $campeon; }
         }
         return null;
     }
 
     public function Actualizar($id, $Nombre, $Rol, $Clase, $Puntos) {    
-        foreach ($this->BBDD as $c) {
+        foreach ($_SESSION['Camps'] as $c) {
             if($c->getId() == $id) {
                 $c->setNombre($Nombre);
                 $c->setRol($Rol);
@@ -49,10 +48,10 @@ Class GestorEntidad{
 
 
     public function Eliminar($id) {
-        foreach ($this->BBDD as $i => $c) {
+        foreach ($_SESSION['Camps'] as $i => $c) {
             if ($c->getId() == $id) {
-                unset($this->BBDD[$i]);
-                $this->BBDD = array_values($this->BBDD);
+                unset($_SESSION['Camps'][$i]);
+                $_SESSION['Camps'] = array_values($_SESSION['Camps']);
                 return true;
             }
         }

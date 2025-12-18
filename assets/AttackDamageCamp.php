@@ -13,7 +13,6 @@ Class AttackDamageCamp extends Campeones{
     public function setAD($Damage){ $this->AD = $Damage; }
 }
 
-?>
 
 
 
